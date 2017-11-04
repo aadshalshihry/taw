@@ -205,9 +205,9 @@ function in_list(list, item) {
 }
 
 // Proxy for in_list
-Object.defineProperty(window, 'inList', {
+Object.defineProperty(window, 'inlist', {
 	get: function() {
-		console.warn('Please use `in_list` instead of `inList`. It will be deprecated soon.');
+		console.warn('Please use `in_list` instead of `in_list`. It will be deprecated soon.');
 		return in_list;
 	}
 });
