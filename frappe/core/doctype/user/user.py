@@ -746,6 +746,11 @@ def sign_up(email, full_name, redirect_to):
 		user.flags.ignore_permissions = True
 		user.insert()
 
+		# set default signup role as per Portal Settings
+		default_role = frappe.db.get_value("Portal Settings", None, "default_role")
+		if default_role:
+			user.add_roles(default_role)
+
 		if redirect_to:
 			frappe.cache().hset('redirect_after_login', user.name, redirect_to)
 
@@ -952,7 +957,7 @@ def send_token_via_email(tmp_id,token=None):
 		delayed=False, retry=3)
 
 	return True
-	
+
 @frappe.whitelist(allow_guest=True)
 def reset_otp_secret(user):
 	otp_issuer = frappe.db.get_value('System Settings', 'System Settings', 'otp_issuer_name')
@@ -964,7 +969,7 @@ def reset_otp_secret(user):
 			'recipients':user_email, 'sender':None, 'subject':'OTP Secret Reset - {}'.format(otp_issuer or "Frappe Framework"),
 			'message':'<p>Your OTP secret on {} has been reset. If you did not perform this reset and did not request it, please contact your System Administrator immediately.</p>'.format(otp_issuer or "Frappe Framework"),
 			'delayed':False,
-			'retry':3 
+			'retry':3
 		}
 		enqueue(method=frappe.sendmail, queue='short', timeout=300, event=None, async=True, job_name=None, now=False, **email_args)
 		return frappe.msgprint(_("OTP Secret has been reset. Re-registration will be required on next login."))

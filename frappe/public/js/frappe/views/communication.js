@@ -63,7 +63,7 @@ frappe.views.CommunicationComposer = Class.extend({
 			{label:__("Send As Email"), fieldtype:"Check",
 				fieldname:"send_email"},
 			{label:__("Send me a copy"), fieldtype:"Check",
-				fieldname:"send_me_a_copy"},
+				fieldname:"send_me_a_copy", 'default': frappe.boot.user.send_me_a_copy},
 			{label:__("Send Read Receipt"), fieldtype:"Check",
 				fieldname:"send_read_receipt"},
 			{label:__("Communication Medium"), fieldtype:"Select",
@@ -309,7 +309,8 @@ frappe.views.CommunicationComposer = Class.extend({
 
 		var args = {
 			args: {
-				from_form: 1,folder:"Home/Attachments"
+				from_form: 1,
+				folder:"Home/Attachments"
 			},
 			callback: function(attachment, r) { me.attachments.push(attachment); },
 			max_width: null,
@@ -331,10 +332,10 @@ frappe.views.CommunicationComposer = Class.extend({
 		}
 
 		$("<h6 class='text-muted add-attachment' style='margin-top: 12px; cursor:pointer;'>"
-				+__("Select Attachments")+"</h6><div class='attach-list'></div>\
-				<p class='add-more-attachments'>\
-				<a class='text-muted small'><i class='octicon octicon-plus' style='font-size: 12px'></i> "
-				+__("Add Attachment")+"</a></p>").appendTo(attach.empty())
+			+__("Select Attachments")+"</h6><div class='attach-list'></div>\
+			<p class='add-more-attachments'>\
+			<a class='text-muted small'><i class='octicon octicon-plus' style='font-size: 12px'></i> "
+			+__("Add Attachment")+"</a></p>").appendTo(attach.empty())
 		attach.find(".add-more-attachments a").on('click',this,function() {
 			me.upload = frappe.ui.get_upload_dialog(args);
 		})
@@ -375,7 +376,14 @@ frappe.views.CommunicationComposer = Class.extend({
 			$(fields.select_print_format.wrapper).toggle(true);
 		}
 
-		$(fields.send_email.input).prop("checked", true)
+		$(fields.send_email.input).prop("checked", true);
+
+		$(fields.send_me_a_copy.input).on('click', () => {
+			// update send me a copy (make it sticky)
+			let val = fields.send_me_a_copy.get_value();
+			frappe.db.set_value('User', frappe.session.user, 'send_me_a_copy', val);
+			frappe.boot.user.send_me_a_copy = val;
+		});
 
 		// toggle print format
 		$(fields.send_email.input).click(function() {
