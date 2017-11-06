@@ -123,6 +123,7 @@ def get_allowed_functions_for_jenv():
 			"get_gravatar": frappe.utils.get_gravatar_url,
 			"full_name": frappe.local.session.data.full_name if getattr(frappe.local, "session", None) else "Guest",
 			"render_template": frappe.render_template,
+			"get_hijry":frappe.utils.get_hijry,
 			'session': {
 				'user': user,
 				'csrf_token': frappe.local.session.data.csrf_token if getattr(frappe.local, "session", None) else ''

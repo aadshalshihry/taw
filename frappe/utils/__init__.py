@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# coding: utf-8
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # MIT License. See license.txt
 
@@ -10,6 +12,7 @@ from markdown2 import markdown as _markdown
 from .html_utils import sanitize_html
 import frappe
 from frappe.utils.identicon import Identicon
+from umalqurra.hijri_date import HijriDate
 from email.utils import parseaddr, formataddr
 # utility functions like cint, int, flt, etc.
 from frappe.utils.data import *
@@ -18,6 +21,23 @@ from six import text_type, string_types
 
 default_fields = ['doctype', 'name', 'owner', 'creation', 'modified', 'modified_by',
 	'parent', 'parentfield', 'parenttype', 'idx', 'docstatus']
+
+
+def get_hijry():
+
+	datee = datetime.datetime.strptime(frappe.utils.today(), "%Y-%m-%d")
+	um = HijriDate(datee.year,datee.month,datee.day,gr=True)
+	# w='%s %s %s' % ( str(um.month_name)  , str(int(um.day)) ,str(int(um.year))  )
+	#month = str(um.month_name)
+	month = unicode(str(um.month_name), encoding='utf-8')			#Preferred method
+	day = str(int(um.day))
+	utf8_string_day = day.encode('utf-8')
+	year = str(int(um.year))
+	utf8_string_year= year.encode('utf-8')
+	#w='%s %s %s ' % (day ,month , year )
+	w='{2} {1} {0}'.format(utf8_string_year,month, utf8_string_day)
+	return 'هـ'+'\u200e' +year+'\u200e' +str(um.month_name) +'\u200e'+str(int(um.day))+'\u200e' 
+
 
 # used in import_docs.py
 # TODO: deprecate it
