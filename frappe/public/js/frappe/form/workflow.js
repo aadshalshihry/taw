@@ -102,6 +102,7 @@ frappe.ui.form.States = Class.extend({
 					// success - add a comment
 					var success = function() {
 						me.frm.timeline.insert_comment("Workflow", next_state);
+						me.frm.page.set_indicator(frappe.workflow.get_document_state(me.frm.doctype,me.get_state()).state)
 					}
 					if(new_docstatus==1 && me.frm.doc.docstatus==0) {
 						me.frm.savesubmit(null, success, on_error);

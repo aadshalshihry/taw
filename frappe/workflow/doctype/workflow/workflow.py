@@ -73,5 +73,4 @@ class Workflow(Document):
 		if int(self.is_active or 0):
 			# clear all other
 			frappe.db.sql("""update tabWorkflow set is_active=0
-				where document_type=%s""",
-				self.document_type)
+				where document_type=%s""", self.document_type)
