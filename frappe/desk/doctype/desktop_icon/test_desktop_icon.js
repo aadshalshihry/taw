@@ -2,15 +2,15 @@
 // rename this file from _test_[name] to test_[name] to activate
 // and remove above this line
 
-QUnit.test("test: Workflow Action", function (assert) {
+QUnit.test("test: Desktop Icon", function (assert) {
 	let done = assert.async();
 
 	// number of asserts
 	assert.expect(1);
 
 	frappe.run_serially([
-		// insert a new Workflow Action
-		() => frappe.tests.make('Workflow Action', [
+		// insert a new Desktop Icon
+		() => frappe.tests.make('Desktop Icon', [
 			// values to be set
 			{key: 'value'}
 		]),

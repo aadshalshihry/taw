@@ -80,7 +80,52 @@ frappe.views.FormFactory = frappe.views.Factory.extend({
 
 	},
 	load: function(dt, dn) {
+		me = this;
 		frappe.container.change_to("Form/" + dt);
 		frappe.views.formview[dt].frm.refresh(dn);
+		me.get_user_notification(dt,dn)
+	}
+	,
+	get_user_notification(dt,dn){
+		me = this;
+		frappe.call({
+				method: 'frappe.user_notification.get_notification',
+				args: {
+					doctype: dt,
+					name: dn,
+				},
+				callback: function(r) {
+					console.log(r.message);
+					if(typeof r.message !== "undefined"){
+						frappe.confirm(
+							__(r.message.message),
+							function(){
+								me.close_user_notification(r.message.name)
+								window.close();
+							},
+							function(){
+								frappe.show_alert(r.message.message)
+							}
+						)
+					}	
+				}
+		});	
+		
+		
+	}
+	,
+	close_user_notification(dn){
+		frappe.call({
+				method: 'frappe.user_notification.close_notification',
+				args: {
+					name: dn
+				},
+				callback: function(r) {
+					console.log(r.message);
+					if(typeof lastname !== "undefined"){
+						frappe.show_alert('Notification Ended')
+					}	
+				}
+		});
 	}
 });
