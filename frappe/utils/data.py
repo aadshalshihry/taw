@@ -407,7 +407,10 @@ def fmt_money(amount, precision=None, currency=None):
 
 	if currency and frappe.defaults.get_global_default("hide_currency_symbol") != "Yes":
 		symbol = frappe.db.get_value("Currency", currency, "symbol") or currency
-		amount = symbol + " " + amount
+		if(frappe.local.lang == 'ar'):
+			amount = amount + " " + symbol
+		else:
+			amount = symbol + " " + amount
 
 	return amount
 
@@ -430,6 +433,10 @@ def get_number_format_info(format):
 #
 # convet currency to words
 #
+def get_currency_long_name(shortcut):
+	if(shortcut == 'SAR'):
+		return "Saudi Riyal"
+
 def money_in_words(number, main_currency = None, fraction_currency=None):
 	"""
 	Returns string in words with currency and fraction currency.
@@ -449,9 +456,9 @@ def money_in_words(number, main_currency = None, fraction_currency=None):
 
 	d = get_defaults()
 	if not main_currency:
-		main_currency = d.get('currency', 'INR')
+		main_currency = (d.get('currency', 'INR'))
 	if not fraction_currency:
-		fraction_currency = frappe.db.get_value("Currency", main_currency, "fraction") or _("Cent")
+		fraction_currency = _(frappe.db.get_value("Currency", main_currency, "fraction")) or _("Cent")
 
 	number_format = frappe.db.get_value("Currency", main_currency, "number_format", cache=True) or \
 		frappe.db.get_default("number_format") or "#,###.##"
@@ -476,6 +483,11 @@ def money_in_words(number, main_currency = None, fraction_currency=None):
 	# 0.XX
 	elif main == '0':
 		out = _(in_words(fraction, in_million).title()) + ' ' + fraction_currency
+	elif frappe.local.lang == 'ar':
+		out = _(in_words(main, in_million).title()) + ' ' + _(get_currency_long_name(main_currency))
+		if cint(fraction):
+			out = out + ' ' + _('and') + ' ' + _(in_words(fraction, in_million).title()) + ' ' + fraction_currency
+
 	else:
 		out = main_currency + ' ' + _(in_words(main, in_million).title())
 		if cint(fraction):
